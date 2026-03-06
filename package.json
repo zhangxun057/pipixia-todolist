@@ -1,0 +1,7 @@
+{
+  "name": "pipixia-todolist",
+  "build": {
+    "command": "echo 'No build needed'",
+    "output": "public"
+  }
+}

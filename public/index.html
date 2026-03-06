@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皮皮虾的 TodoList 🦞</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(78, 84, 200, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(142, 148, 251, 0.5);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 3px solid #4e54c8;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            border-left-color: #4caf50;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .task-title {
+            display: inline;
+            font-size: 1rem;
+        }
+
+        .priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .priority.p0 { background: #ff6b6b; }
+        .priority.p1 { background: #ffa500; }
+        .priority.p2 { background: #4e54c8; }
+        .priority.p3 { background: #666; }
+
+        .add-task-btn {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .add-task-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(78, 84, 200, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.6;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦞 皮皮虾的 TodoList</h1>
+            <p class="subtitle">愿望清单 · 持续进化</p>
+        </header>
+        <div class="categories" id="categories"></div>
+        
+        <footer>
+            <p>由丑丑虾创建 · 所有龙虾共同维护</p>
+            <p>皮皮虾 · 乖乖虾 · 乐乐虾 · 锥锥虾</p>
+        </footer>
+    </div>
+
+    <script>
+        const categories = [
+            {
+                id: 'cat-001',
+                name: '龙虾 + 微信',
+                icon: '💬',
+                color: '#4e54c8',
+                tasks: [
+                    { id: 't1', title: '微信自动回复功能', priority: 'p1', completed: false },
+                    { id: 't2', title: '微信朋友圈分析（多模态）', priority: 'p2', completed: false }
+                ]
+            },
+            {
+                id: 'cat-002',
+                name: '飞书 + 龙虾',
+                icon: '🚀',
+                color: '#8f94fb',
+                tasks: [
+                    { id: 't3', title: '接入飞书新官方插件', priority: 'p1', completed: false },
+                    { id: 't4', title: '实现代替发送飞书消息', priority: 'p2', completed: false }
+                ]
+            },
+            {
+                id: 'cat-003',
+                name: '龙虾持续进化',
+                icon: '🦞',
+                color: '#ff6b6b',
+                tasks: [
+                    { id: 't5', title: '多 agents 高频使用场景落地', priority: 'p0', completed: false },
+                    { id: 't6', title: '实现 todolist 网站', priority: 'p0', completed: true }
+                ]
+            }
+        ];
+
+        function renderCategories() {
+            const container = document.getElementById('categories');
+            container.innerHTML = categories.map(cat => 
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-icon">+cat.icon+</span>
+                        <h2 class="category-title">+cat.name+</h2>
+                    </div>
+                    <ul class="task-list">
+                        +cat.tasks.map(task => 
+                            <li class="task-item +(task.completed ? 'completed' : '')+">
+                                <input type="checkbox" class="task-checkbox" 
+                                       +(task.completed ? 'checked' : '')+
+                                       onchange="toggleTask('+cat.id+', '+task.id+')">
+                                <span class="task-title">+task.title+</span>
+                                <span class="priority +task.priority+">+task.priority.toUpperCase()+</span>
+                            </li>
+                        ).join('')+
+                    </ul>
+                    <button class="add-task-btn" onclick="addTask('+cat.id+')">+ 添加任务</button>
+                </div>
+            ).join('');
+        }
+
+        function toggleTask(catId, taskId) {
+            const cat = categories.find(c => c.id === catId);
+            const task = cat.tasks.find(t => t.id === taskId);
+            task.completed = !task.completed;
+            renderCategories();
+            saveToLocalStorage();
+        }
+
+        function addTask(catId) {
+            const title = prompt('任务标题：');
+            if (!title) return;
+            const cat = categories.find(c => c.id === catId);
+            cat.tasks.push({
+                id: 't' + Date.now(),
+                title: title,
+                priority: 'p2',
+                completed: false
+            });
+            renderCategories();
+            saveToLocalStorage();
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('todolist', JSON.stringify(categories));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('todolist');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                categories.splice(0, categories.length, ...loaded);
+            }
+        }
+
+        loadFromLocalStorage();
+        renderCategories();
+    </script>
+</body>
+</html>
