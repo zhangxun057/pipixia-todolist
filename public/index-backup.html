@@ -31,12 +31,6 @@
             border-radius: 20px;
             margin-bottom: 40px;
             box-shadow: 0 10px 30px rgba(78, 84, 200, 0.3);
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         h1 {
@@ -47,20 +41,6 @@
         .subtitle {
             opacity: 0.9;
             font-size: 1.1rem;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-
-        .stat-item {
-            background: rgba(255,255,255,0.1);
-            padding: 8px 16px;
-            border-radius: 20px;
         }
 
         .categories {
@@ -77,12 +57,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         .category-card:hover {
@@ -94,13 +68,7 @@
         .category-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             margin-bottom: 20px;
-        }
-
-        .category-title-wrap {
-            display: flex;
-            align-items: center;
         }
 
         .category-icon {
@@ -111,21 +79,6 @@
         .category-title {
             font-size: 1.5rem;
             font-weight: 600;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4e54c8, #8f94fb);
-            transition: width 0.3s ease;
         }
 
         .task-list {
@@ -139,7 +92,6 @@
             border-radius: 10px;
             border-left: 3px solid #4e54c8;
             transition: all 0.2s ease;
-            cursor: move;
         }
 
         .task-item:hover {
@@ -158,8 +110,6 @@
         .task-checkbox {
             margin-right: 10px;
             cursor: pointer;
-            width: 18px;
-            height: 18px;
         }
 
         .task-title {
@@ -185,17 +135,16 @@
             background: linear-gradient(135deg, #4e54c8, #8f94fb);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 15px 30px;
             border-radius: 10px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 15px;
-            width: 100%;
+            margin-top: 20px;
         }
 
         .add-task-btn:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
             box-shadow: 0 5px 20px rgba(78, 84, 200, 0.4);
         }
 
@@ -205,15 +154,6 @@
             opacity: 0.6;
             margin-top: 50px;
         }
-
-        @media (max-width: 768px) {
-            .categories {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -221,11 +161,6 @@
         <header>
             <h1>🦞 皮皮虾的 TodoList</h1>
             <p class="subtitle">愿望清单 · 持续进化</p>
-            <div class="stats">
-                <div class="stat-item">总任务: <span id="totalTasks">0</span></div>
-                <div class="stat-item">已完成: <span id="completedTasks">0</span></div>
-                <div class="stat-item">进行中: <span id="inProgressTasks">0</span></div>
-            </div>
         </header>
         <div class="categories" id="categories"></div>
         
@@ -269,35 +204,17 @@
             }
         ];
 
-        function updateStats() {
-            let total = 0, completed = 0;
-            categories.forEach(cat => {
-                total += cat.tasks.length;
-                completed += cat.tasks.filter(t => t.completed).length;
-            });
-            document.getElementById('totalTasks').textContent = total;
-            document.getElementById('completedTasks').textContent = completed;
-            document.getElementById('inProgressTasks').textContent = total - completed;
-        }
-
         function renderCategories() {
             const container = document.getElementById('categories');
-            container.innerHTML = categories.map(cat => {
-                const progress = cat.tasks.length ? (cat.tasks.filter(t => t.completed).length / cat.tasks.length * 100) : 0;
-                return 
+            container.innerHTML = categories.map(cat => 
                 <div class="category-card">
                     <div class="category-header">
-                        <div class="category-title-wrap">
-                            <span class="category-icon">+cat.icon+</span>
-                            <h2 class="category-title">+cat.name+</h2>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: +progress+%"></div>
+                        <span class="category-icon">+cat.icon+</span>
+                        <h2 class="category-title">+cat.name+</h2>
                     </div>
                     <ul class="task-list">
                         +cat.tasks.map(task => 
-                            <li class="task-item +(task.completed ? 'completed' : '')+" draggable="true">
+                            <li class="task-item +(task.completed ? 'completed' : '')+">
                                 <input type="checkbox" class="task-checkbox" 
                                        +(task.completed ? 'checked' : '')+
                                        onchange="toggleTask('+cat.id+', '+task.id+')">
@@ -308,8 +225,7 @@
                     </ul>
                     <button class="add-task-btn" onclick="addTask('+cat.id+')">+ 添加任务</button>
                 </div>
-            }).join('');
-            updateStats();
+            ).join('');
         }
 
         function toggleTask(catId, taskId) {
